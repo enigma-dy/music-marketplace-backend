@@ -1,5 +1,36 @@
 import Playlist from "../models/playlist-model.js";
+import Beat from "../models/beat-model.js";
 import mongoose from "mongoose";
+
+
+
+
+export const getMyBeats = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+    console.log(userId)
+    
+    const userBeats = await Beat.find({ createdBy: userId });
+
+    if (!userBeats.length) {
+      return res.status(404).json({
+        status: "failed",
+        message: "No beats found for this user",
+      });
+    }
+
+    res.status(200).json({
+      status: "successful",
+      results: userBeats.length,
+      beats: userBeats,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "failed", message: "Server Error" });
+  }
+};
+
+
 
 export const createPlaylist = async (req, res) => {
   try {
@@ -13,13 +44,37 @@ export const createPlaylist = async (req, res) => {
       });
     }
 
-    const newPlaylist = new Playlist({
-      title,
-      user: userId,
-      beats: beats || [],
+    if (!req.file) {
+      return res.status(400).json({
+        status: "failed",
+        message: "Playlist cover image is required",
+      });
+    }
+
+    
+    const beatIds = Array.isArray(beats) ? beats : JSON.parse(beats);
+
+    const userBeats = await Beat.find({
+      _id: { $in: beatIds },
+      createdBy: userId,
     });
 
-    await newPlaylist.save();
+    if (userBeats.length !== beatIds.length) {
+      return res.status(400).json({
+        status: "failed",
+        message: "One or more selected beats do not belong to you",
+      });
+    }
+
+ 
+    const coverImagePath = req.file.path;
+
+    const newPlaylist = await Playlist.create({
+      title,
+      user: userId,
+      beats: beatIds,
+      cover: coverImagePath,
+    });
 
     res.status(201).json({
       status: "successful",
@@ -31,6 +86,7 @@ export const createPlaylist = async (req, res) => {
     res.status(500).json({ status: "failed", message: "Server Error" });
   }
 };
+
 
 export const getAllPlaylists = async (req, res) => {
   try {

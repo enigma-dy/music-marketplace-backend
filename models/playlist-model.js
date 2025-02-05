@@ -18,6 +18,10 @@ const playlistSchema = new mongoose.Schema(
         ref: "Beat",
       },
     ],
+    cover: {
+      type: String,
+      required: [true, "Playlist cover is required"], 
+    },
   },
   {
     timestamps: true,

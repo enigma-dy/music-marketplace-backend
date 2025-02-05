@@ -1,5 +1,5 @@
 import User from "../models/user-model.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
@@ -47,7 +47,7 @@ export const registerUser = async (req, res) => {
 
     res.cookie("maniBeatz", token, {
       httpOnly: true,
-      maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
+      maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(201).json({

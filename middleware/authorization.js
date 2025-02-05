@@ -4,7 +4,7 @@ export const authorizeAdmin = (reqiredRole) => {
     if (role != reqiredRole) {
       res.status(403).json({
         status: "unsuccessfull",
-        message: `Forbideen. You need ${admin} or ${producer} previledges`,
+        message: `Forbideen. You need Admin or Producer previledges`,
       });
     }
     next();

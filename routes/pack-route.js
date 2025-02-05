@@ -7,6 +7,6 @@ const router = express.Router();
 
 router
   .get("/", getAllPacks)
-  .post("/upload-packes", authenticateUser, uploadPackFields, createPack);
+  .post("/upload-packs", authenticateUser, uploadPackFields, createPack);
 
 export default router;

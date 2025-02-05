@@ -20,12 +20,10 @@ const packSchema = new mongoose.Schema(
     fileUrl: {
       type: String,
       required: [true, "File URL is required"],
-      validate: {
-        validator: function (value) {
-          return /\.(zip|rar|7z|tar|gz)$/.test(value);
-        },
-        message: "File must be a valid compressed format (zip, rar, etc.)",
-      },
+    },
+    coverImage: {
+      type: String,
+      required: [true, "Cover image URL is required"],
     },
     contents: [
       {
@@ -35,7 +33,7 @@ const packSchema = new mongoose.Schema(
           required: true,
         },
         name: { type: String, required: true },
-        size: { type: Number }, // File size in bytes
+        size: { type: Number },
         description: { type: String },
       },
     ],
@@ -56,9 +54,6 @@ const packSchema = new mongoose.Schema(
         maxlength: [30, "Tag cannot exceed 30 characters"],
       },
     ],
-    coverImage: {
-      type: String,
-    },
     license: {
       type: String,
       enum: ["exclusive", "non-exclusive", "royalty-free"],
@@ -68,11 +63,7 @@ const packSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    status: {
-      type: String,
-      enum: ["active", "inactive", "deleted"],
-      default: "active",
-    },
+
     createdAt: {
       type: Date,
       default: Date.now,

@@ -6,30 +6,43 @@ export const createPack = async (req, res) => {
       req.body;
     const creator = req.user.id;
 
-    const fileUrl = req.files["file"][0].path;
+    if (!title || !price || !req.files["file"]) {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Required fields are missing" });
+    }
 
-    const coverUrl = req.files["pack-cover"]
-      ? req.files["pack-cover"][0].path
-      : null;
-
-    if (!req.files) {
+    let parsedContents;
+    try {
+      parsedContents =
+        typeof contents === "string" ? JSON.parse(contents) : contents;
+    } catch (error) {
       return res.status(400).json({
         status: "failed",
-        message: "A compressed file is required to create a pack",
+        message: "Invalid JSON format for contents",
       });
     }
+
+    const file = req.files["file"][0];
+    const cover = req.files["pack-cover"] ? req.files["pack-cover"][0] : null;
+
+    const baseUrl = process.env.BASE_URL || "http://localhost:5000";
+    const fileUrl = `${baseUrl}/uploads/beats/${file.filename}`;
+    const coverUrl = cover
+      ? `${baseUrl}/uploads/beats/${cover.filename}`
+      : null;
 
     const newPack = await Pack.create({
       title,
       description,
       creator,
       fileUrl,
-      coverUrl,
+      coverImage: coverUrl,
       price,
       discount,
       tags,
       license,
-      contents,
+      contents: parsedContents,
     });
 
     res.status(201).json({

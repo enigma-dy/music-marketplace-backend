@@ -1,5 +1,6 @@
 import Genre from "../models/genre-model.js";
 import Beat from "../models/beat-model.js";
+import { buildQueryPipeline } from "../utils/queryFilter.js";
 
 export const getAllGenres = async (req, res) => {
   try {
@@ -12,6 +13,52 @@ export const getAllGenres = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "failed", message: "Server Error" });
+  }
+};
+
+export const getGenresWithSongs = async (req, res) => {
+  try {
+   
+    const genrePipeline = buildQueryPipeline(req.query);
+    const genres = await Genre.aggregate(genrePipeline);
+
+    const genreSongs = await Promise.all(
+      genres.map(async (genre) => {
+        
+        const songPipeline = buildQueryPipeline({
+          ...req.query,
+          genre: genre._id,
+        });
+
+        const songs = await Beat.aggregate(songPipeline).lookup({
+          from: "users",
+          localField: "createdBy",
+          foreignField: "_id",
+          as: "createdBy",
+        });
+
+        return {
+          genre: genre.name,
+          songs: songs.map((song) => ({
+            title: song.title,
+            coverImage: song.coverImagePath,
+            owner: song.createdBy[0]?.username || "Unknown",
+          })),
+        };
+      })
+    );
+
+    res.status(200).json({
+      status: "successful",
+      message: "Genres and songs fetched successfully",
+      data: genreSongs,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "failed",
+      message: "Server error while fetching genres and songs",
+    });
   }
 };
 

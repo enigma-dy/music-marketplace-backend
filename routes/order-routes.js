@@ -5,7 +5,7 @@ import express from "express";
 
 const route = express.Router();
 
-route.post("/beat", beatOrder.createOrder);
+route.post("/beat", authenticateUser, beatOrder.createOrder);
 route
   .get("/orders", beatOrder.getOrdersByBuyer)
   .get("/:id", beatOrder.getOrderById);

@@ -8,12 +8,12 @@ const routes = express.Router();
 
 routes
   .get("/", track.getAllTracks)
-  .get("/stream/:id", track.streamTrack)
   .get("/:id", track.getTrack)
+  .get("/stream/:id", track.getStreamLink)
   .post(
     "/",
     authenticateUser,
-    authorizeProducer("artist"),
+    authorizeProducer("producer"),
     uploadBeat,
     track.createTrack
   )

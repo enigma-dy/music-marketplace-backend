@@ -7,7 +7,11 @@ const beatSchema = new mongoose.Schema(
       required: [true, "Beat title is required"],
       minlength: [3, "Beat title must be at least 3 characters long"],
     },
-    artist: String,
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     genre: {
       type: mongoose.Schema.Types.ObjectId,
       required: [true, "Genre is required"],
@@ -22,6 +26,10 @@ const beatSchema = new mongoose.Schema(
       min: [0, "Price must be a positive number"],
     },
     filePath: {
+      type: String,
+      required: [true, "File URL is required"],
+    },
+    coverImagePath: {
       type: String,
       required: [true, "File URL is required"],
     },
@@ -45,6 +53,9 @@ const beatSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+
+beatSchema.index({ title: 'text', description: 'text' });
 
 const Beat = mongoose.model("Beat", beatSchema);
 export default Beat;

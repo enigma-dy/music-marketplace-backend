@@ -17,12 +17,11 @@ export const createBid = async (req, res) => {
 
     const newBid = await Bid.create({ beat, user, bidAmount });
 
-    const beatData = await Beat.findById(beat).populate("artist");
+    const beatData = await Beat.findById(beat).populate("createdBy");
     if (!beatData) {
-      return res.status(404).json({
-        status: "failed",
-        message: "Beat not found.",
-      });
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Beat not found" });
     }
 
     const notificationMessage = `A new bid of $${bidAmount} has been placed on your beat "${beatData.title}".`;

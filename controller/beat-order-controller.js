@@ -1,11 +1,15 @@
 import BeatOrder from "../models/beat-order-model.js";
 import mongoose from "mongoose";
 import { sendEmail } from "../utils/mailer.js";
+import Notification from "../models/notification-model.js";
+import { v4 as uuidv4 } from "uuid";
 
 export const createOrder = async (req, res) => {
   try {
-    const { buyer, beat, amount, license, paymentMethod, transactionId } =
-      req.body;
+    const { beat, amount, license, paymentMethod } = req.body;
+
+    const buyer = req.user?.id;
+    const transactionId = uuidv4();
 
     if (!buyer || !beat || !amount || !paymentMethod || !transactionId) {
       return res.status(400).json({
@@ -26,16 +30,16 @@ export const createOrder = async (req, res) => {
     const notificationMessage = `A new payment for $${beat} has been made`;
 
     await Notification.create({
-      user: buyer._id,
+      user: buyer,
       type: "bid",
       message: notificationMessage,
     });
 
-    await sendEmail(
-      buyer.email,
-      "New Beat Order",
-      `<p>${notificationMessage}</p>`
-    );
+    // await sendEmail(
+    //   buyer.email,
+    //   "New Beat Order",
+    //   `<p>${notificationMessage}</p>`
+    // );
 
     res.status(201).json({
       status: "successful",

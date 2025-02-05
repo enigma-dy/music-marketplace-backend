@@ -29,7 +29,7 @@ const createUpload = (folderName) => {
 
 const uploadBeat = multer({ storage: createUpload("beats") }).fields([
   { name: "file", maxCount: 1 },
-  { name: "cover", maxCount: 1 },
+  { name: "coverImage", maxCount: 1 },
 ]);
 const uploadPackFields = multer({ storage: createUpload("packs") }).fields([
   { name: "file", maxCount: 1 },

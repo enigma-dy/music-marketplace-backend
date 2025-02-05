@@ -33,11 +33,11 @@ export const createOrder = async (req, res) => {
       message: notificationMessage,
     });
 
-    await sendEmail(
-      buyer.email,
-      "New pack Order",
-      `<p>${notificationMessage}</p>`
-    );
+    // await sendEmail(
+    //   buyer.email,
+    //   "New pack Order",
+    //   `<p>${notificationMessage}</p>`
+    // );
 
     res.status(201).json({
       status: "successful",
