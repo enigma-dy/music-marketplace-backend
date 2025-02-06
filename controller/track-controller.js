@@ -67,7 +67,7 @@ export const createTrack = async (req, res) => {
       });
     }
 
-    const baseUrl = process.env.BASE_URL || "http://localhost:5000";
+    const baseUrl = process.env.BASE_URL;
     const filePath = `${baseUrl}/uploads/beats/${file.filename}`;
     const coverImagePath = `${baseUrl}/uploads/beats/${coverImage.filename}`;
 
