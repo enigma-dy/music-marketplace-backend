@@ -26,7 +26,7 @@ export const createPack = async (req, res) => {
     const file = req.files["file"][0];
     const cover = req.files["pack-cover"] ? req.files["pack-cover"][0] : null;
 
-    const baseUrl = process.env.BASE_URL || "http://localhost:5000";
+    const baseUrl = process.env.BASE_URL;
     const fileUrl = `${baseUrl}/uploads/beats/${file.filename}`;
     const coverUrl = cover
       ? `${baseUrl}/uploads/beats/${cover.filename}`

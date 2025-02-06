@@ -163,7 +163,7 @@ export const getStreamLink = async (req, res) => {
     console.log(track);
 
     const relativeFilePath = track.filePath
-      .replace("http://localhost:5000", "")
+      .replace(process.env.BASE_URL, "")
       .replace(/^\/+/, "");
 
     console.log(relativeFilePath);
