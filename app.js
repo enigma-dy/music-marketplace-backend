@@ -21,12 +21,22 @@ connectDB();
 
 const app = express();
 
-const corsOptions = {
-  origin: process.env.ORIGIN,
-  credentials: true,
-};
+const allowedOrigins = process.env.ORIGIN.split(",");
 
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(cookieParser());
 
